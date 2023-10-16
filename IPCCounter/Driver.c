@@ -26,12 +26,12 @@
 	} while (0)
 
 
-#define DEVICE_DRIVERTEST0 0x8019
+#define DEVICE_IPCCOUNTER 0x8019
 
-#define IOCTL_DRIVERTEST0_INC   \
-    CTL_CODE(DEVICE_DRIVERTEST0, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS)
-#define IOCTL_DRIVERTEST0_DEC	\
-    CTL_CODE(DEVICE_DRIVERTEST0, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_IPCCOUNTER_INC   \
+    CTL_CODE(DEVICE_IPCCOUNTER, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_IPCCOUNTER_DEC	\
+    CTL_CODE(DEVICE_IPCCOUNTER, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS)
 
 UNICODE_STRING g_DeviceName = RTL_CONSTANT_STRING(L"\\Device\\IPCCounter");
 UNICODE_STRING g_DeviceLink = RTL_CONSTANT_STRING(L"\\??\\IPCCounter");
@@ -99,11 +99,11 @@ IPCCounterDeviceControl(
 	BAIL_MY(irpSp->Parameters.DeviceIoControl.OutputBufferLength >= sizeof(LONG), STATUS_BUFFER_TOO_SMALL);
 
 	switch (irpSp->Parameters.DeviceIoControl.IoControlCode) {
-	case IOCTL_DRIVERTEST0_INC:
+	case IOCTL_IPCCOUNTER_INC:
 		InterlockedIncrement((LONG*)(&irpSp->FileObject->FsContext2));
 		operationResult = InterlockedIncrement(&g_Counter);
 		break;
-	case IOCTL_DRIVERTEST0_DEC:
+	case IOCTL_IPCCOUNTER_DEC:
 		InterlockedDecrement((LONG*)(&irpSp->FileObject->FsContext2));
 		operationResult = InterlockedDecrement(&g_Counter);
 		break;
