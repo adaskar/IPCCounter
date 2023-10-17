@@ -1,41 +1,39 @@
 #include <ntddk.h>
 
-#define BAIL_NT(status)																						\
-	do {																									\
-		if (!NT_SUCCESS(status)) {																			\
-			KdPrint(("Failed with status: (0x%08X). File: %s. Line: %d\n", status, __FILE__, __LINE__));	\
-			goto exit;																						\
-		}																									\
+#define BAIL_NT(status) \
+	do { \
+		if (!NT_SUCCESS(status)) { \
+			KdPrint(("Failed with status: (0x%08X). File: %s. Line: %d\n", status, __FILE__, __LINE__)); \
+			goto exit; \
+		} \
 	} while (0)
 
-#define BAIL_MY(s, st)																						\
-	do {																									\
-		if (!(s)) {																							\
-			KdPrint(("Failed with status: (0x%08X). File: %s. Line: %d\n", st, __FILE__, __LINE__));		\
-			status = st;																					\
-			goto exit;																						\
-		}																									\
+#define BAIL_MY(s, st) \
+	do { \
+		if (!(s)) { \
+			KdPrint(("Failed with status: (0x%08X). File: %s. Line: %d\n", st, __FILE__, __LINE__)); \
+			status = st; \
+			goto exit; \
+		} \
 	} while (0)
 
-#define CompleteIRP(status, info)																			\
-	do {																									\
-		Irp->IoStatus.Status = status;																		\
-		Irp->IoStatus.Information = info;																	\
-		IoCompleteRequest(Irp, IO_NO_INCREMENT);															\
-		return status;																						\
+#define CompleteIRP(status, info) \
+	do { \
+		Irp->IoStatus.Status = status; \
+		Irp->IoStatus.Information = info; \
+		IoCompleteRequest(Irp, IO_NO_INCREMENT); \
+		return status; \
 	} while (0)
-
 
 #define DEVICE_IPCCOUNTER 0x8019
 
-#define IOCTL_IPCCOUNTER_INC   \
+#define IOCTL_IPCCOUNTER_INC \
     CTL_CODE(DEVICE_IPCCOUNTER, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS)
-#define IOCTL_IPCCOUNTER_DEC	\
+#define IOCTL_IPCCOUNTER_DEC \
     CTL_CODE(DEVICE_IPCCOUNTER, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS)
 
 UNICODE_STRING g_DeviceName = RTL_CONSTANT_STRING(L"\\Device\\IPCCounter");
 UNICODE_STRING g_DeviceLink = RTL_CONSTANT_STRING(L"\\??\\IPCCounter");
-
 
 LONG g_Counter;
 
