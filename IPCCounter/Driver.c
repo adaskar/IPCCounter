@@ -112,6 +112,7 @@ IPCCounterDeviceControl(
 exit:
 	if (!NT_SUCCESS(status)) {
 		CompleteIRP(status, 0);
+		return status;
 	}
 
 	CompleteIRP(STATUS_SUCCESS, sizeof(LONG));
